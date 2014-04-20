@@ -1,6 +1,7 @@
 package course.labs.locationlab;
 
 import java.util.ArrayList;
+
 import android.app.ListActivity;
 import android.content.Context;
 import android.location.Location;
@@ -35,6 +36,8 @@ public class PlaceViewActivity extends ListActivity implements LocationListener 
 
 	// A fake location provider used for testing
 	private MockLocationProvider mMockLocationProvider;
+	
+	private TextView mFooterView;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -55,16 +58,18 @@ public class PlaceViewActivity extends ListActivity implements LocationListener 
 		// 1. get a layout inflater
 		// 2. call the inflate method, with the id of the footer view resource
 		// 3. cast it as a TextView
-		TextView footerView = (TextView) this.getLayoutInflater().inflate(R.layout.footer_view, null);
+		mFooterView = (TextView) this.getLayoutInflater().inflate(R.layout.footer_view, null);
 
-		getListView().addFooterView(footerView); // adds it to the ListView
-
+		// adds it to the ListView
+		getListView().addFooterView(mFooterView); 
+		// enable it only if there is a location
+		mFooterView.setEnabled(mLastLocationReading != null);
 		
         // TODO - When the footerView's onClick() method is called, it must issue the
         // following log call
         // log("Entered footerView.OnClickListener.onClick()");
  		
-		footerView.setOnClickListener(new OnClickListener() {
+		mFooterView.setOnClickListener(new OnClickListener() {
 			
 			@Override
 			public void onClick(View arg0) {
@@ -72,18 +77,28 @@ public class PlaceViewActivity extends ListActivity implements LocationListener 
 				
 		        // footerView must respond to user clicks.
 		        // Must handle 3 cases:
+				// 3) There is no current location - response is up to you. The best
+		        // solution is to disable the footerView until you have a location.
+				if (mLastLocationReading == null)
+				{
+					log("Location data is not available");
+					mFooterView.setEnabled(false);
+				}
+				
 		        // 1) The current location is new - download new Place Badge. Issue the
 		        // following log call:
 		        // log("Starting Place Download");
-
+				if(! mAdapter.intersects(mLastLocationReading))
+				{
+					log("Starting Place Download");
+					PlaceDownloaderTask pdt = new PlaceDownloaderTask(PlaceViewActivity.this);
+					pdt.execute(mLastLocationReading);
+				} else {
 		        // 2) The current location has been seen before - issue Toast message.
 		        // Issue the following log call:
-		        // log("You already have this location badge");
-		        
-		        // 3) There is no current location - response is up to you. The best
-		        // solution is to disable the footerView until you have a location.
-		        // Issue the following log call:
-		        // log("Location data is not available");
+					log("You already have this location badge");
+					Toast.makeText(getApplicationContext(), "You already have this location badge", Toast.LENGTH_LONG).show();					
+				}
 				
 				
 			}
@@ -148,12 +163,18 @@ public class PlaceViewActivity extends ListActivity implements LocationListener 
 
         // TODO - Handle location updates
         // Cases to consider
-        // 1) If there is no last location, keep the current location.
+        // 1) If there is no last location, keep the current location.		
         // 2) If the current location is older than the last location, ignore
         // the current location
         // 3) If the current location is newer than the last locations, keep the
         // current location.
-
+		if(mLastLocationReading == null || age(currentLocation) < age(mLastLocationReading))
+		{
+			mLastLocationReading = currentLocation;
+			
+			// enable the footer view again since we have an updated location
+			mFooterView.setEnabled(true);
+		}
 
 	}
 
