@@ -43,7 +43,7 @@ public class PlaceViewActivity extends ListActivity implements LocationListener 
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 
-        // TODO - Set up the app's user interface
+        // DONE - Set up the app's user interface
         // This class is a ListActivity, so it has its own ListView
         // ListView's adapter should be a PlaceViewAdapter
 		mAdapter = new PlaceViewAdapter(getApplicationContext());
@@ -52,7 +52,7 @@ public class PlaceViewActivity extends ListActivity implements LocationListener 
 		// Put divider between ToDoItems and FooterView
 		getListView().setFooterDividersEnabled(true);
 			
-        // TODO - add a footerView to the ListView
+        // DONE - add a footerView to the ListView
         // You can use footer_view.xml to define the footer
 		
 		// 1. get a layout inflater
@@ -65,7 +65,7 @@ public class PlaceViewActivity extends ListActivity implements LocationListener 
 		// enable it only if there is a location
 		mFooterView.setEnabled(mLastLocationReading != null);
 		
-        // TODO - When the footerView's onClick() method is called, it must issue the
+        // DONE - When the footerView's onClick() method is called, it must issue the
         // following log call
         // log("Entered footerView.OnClickListener.onClick()");
  		
@@ -118,7 +118,7 @@ public class PlaceViewActivity extends ListActivity implements LocationListener 
 		mMockLocationProvider = new MockLocationProvider(
 				LocationManager.NETWORK_PROVIDER, this);
 
-        // TODO - Check NETWORK_PROVIDER for an existing location reading.
+        // DONE - Check NETWORK_PROVIDER for an existing location reading.
 
 		// Acquire reference to the LocationManager
 		if (null == (mLocationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE)))
@@ -132,7 +132,7 @@ public class PlaceViewActivity extends ListActivity implements LocationListener 
 			mLastLocationReading = tempLoc;
 		}
 		
-        // TODO - register to receive location updates from NETWORK_PROVIDER
+        // DONE - register to receive location updates from NETWORK_PROVIDER
 		
 		// can use "this" since this class implements LocationListener
 		mLocationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, mMinTime, mMinDistance, this);
@@ -144,7 +144,7 @@ public class PlaceViewActivity extends ListActivity implements LocationListener 
 
 		mMockLocationProvider.shutdown();
 
-		// TODO - unregister for location updates
+		// DONE - unregister for location updates
 		mLocationManager.removeUpdates(this);
 		
 		super.onPause();
@@ -161,7 +161,7 @@ public class PlaceViewActivity extends ListActivity implements LocationListener 
 	@Override
 	public void onLocationChanged(Location currentLocation) {
 
-        // TODO - Handle location updates
+        // DONE - Handle location updates
         // Cases to consider
         // 1) If there is no last location, keep the current location.		
         // 2) If the current location is older than the last location, ignore
